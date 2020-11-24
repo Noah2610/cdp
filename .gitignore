@@ -1,0 +1,6 @@
+log/
+*.log
+
+/find_projects
+
+_ignore/
