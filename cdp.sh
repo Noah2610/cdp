@@ -53,7 +53,8 @@ END
 function main {
     check "fzf"
     check "grep"
-    check_file "$FIND_PROJECTS_PROG"
+
+    check_find_projects
 
     parse_args "$@"
 
@@ -79,6 +80,10 @@ function run_find_projects {
             | grep -i "$pattern" \
             | head -n 1
     fi
+}
+
+function check_find_projects {
+    [ -f "$FIND_PROJECTS_PROG" ] || ( 1>&2 "${ROOT}/build" )
 }
 
 function parse_args {
