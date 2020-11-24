@@ -10,19 +10,14 @@ const PROJECT_FILES_EXTS: [&str; 10] = [
 ];
 
 fn main() -> io::Result<()> {
-    if let Some((_, home_dir)) = env::vars().find(|(key, value)| key == "HOME")
-    {
-        let projects_dir = Path::new(&home_dir).join("Projects");
+    let root =
+        PathBuf::from(env::args().skip(1).next().unwrap_or(String::from(".")));
 
-        let projects = find_projects(projects_dir)?;
+    let projects = find_projects(root)?;
 
-        for project in projects.projects {
-            println!("\"{}\"", project.to_str().unwrap());
-        }
-    } else {
-        eprintln!("Couldn't get $HOME environment variable.");
-        std::process::exit(1);
-    };
+    for project in projects.projects {
+        println!("\"{}\"", project.to_str().unwrap());
+    }
 
     Ok(())
 }
@@ -30,7 +25,6 @@ fn main() -> io::Result<()> {
 #[derive(Default, Debug)]
 struct Projects {
     pub projects: Vec<PathBuf>,
-
     checked_dirs: Vec<PathBuf>,
 }
 

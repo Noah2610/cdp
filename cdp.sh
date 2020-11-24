@@ -8,23 +8,14 @@ function _dl_util_sh {
     source "${dir}/util.sh"
 }; _dl_util_sh "$0"
 
-ARG_DIR=""
-PROJ_EXTS=(
-html
-js
-json
-lua
-rb
-ron
-rs
-sh
-toml
-ts
-)
+FIND_PROJECTS_PROG="${ROOT}/find_projects"
+
+OPT_ROOT=
+ARG_PATTERN=
 
 HELP=$(cat <<END
 USAGE
-    ${0} [FLAGS...] [OPTIONS...] [DIR]
+    ${0} [FLAGS...] [OPTIONS...] [PATTERN]
 
 DESCRIPTION
     Finds project directories and feeds them to FZF.
@@ -33,33 +24,56 @@ DESCRIPTION
     any form of code or manifest files, by checking
     files' extensions.
     File extensions to identify project directories by:
-        ${PROJ_EXTS[*]}
+        html js json lua rb ron rs sh toml ts
 
 ARGUMENTS
-    DIR
-        Directory to fuzzy find projects in.
-        DEFAULT: "\$HOME/Projects"
+    PATTERN
+        If PATTERN is given, then fzf isn't started,
+        instead the first project directory match
+        for PATTERN is used.
+        Non-interactive.
+        If not given, runs interactively with fzf.
 
 FLAGS
     --help, -h
         Print help and exit.
+
+OPTIONS
+    --root ROOT
+        Directory to fuzzy find projects in.
+        DEFAULT: "\$HOME/Projects"
 END
 )
 
 function main {
-    check "find"
     check "fzf"
-    check_file "./find_projects"
+    check "grep"
+    check_file "$FIND_PROJECTS_PROG"
 
     parse_args "$@"
 
-    local project_dirs=
-    project_dirs=$(find_projects)
+    local select_project=
+    select_project=$( run_find_projects "$OPT_ROOT" "$ARG_PATTERN" )
+
+    echo "$select_project"
 }
 
-function find_projects {
-    local dirs=
-    dirs=$( ./find_projects )
+function run_find_projects {
+    local root_dir="$1"
+    local pattern="$2"
+
+    echo "$root_dir"
+
+    if [ -z "$pattern" ]; then
+        # interactive
+        $FIND_PROJECTS_PROG "$root_dir" | fzf
+    else
+        # with PATTERN argument
+        $FIND_PROJECTS_PROG "$root_dir" \
+            | sort \
+            | grep -i "$pattern" \
+            | head -n 1
+    fi
 }
 
 function parse_args {
@@ -68,17 +82,25 @@ function parse_args {
             "--help"|"-h")
                 print_help
                 ;;
+            "--root")
+                OPT_ROOT="$2"
+                [ -z "$OPT_ROOT" ] && err "No value given to option $(clrcode)$1$(clrrs)"
+                shift || true
+                ;;
             *)
-                if [ -z "$ARG_DIR" ]; then
-                    ARG_DIR="$1"
+                if [ -z "$ARG_PATTERN" ]; then
+                    ARG_PATTERN="$1"
                 else
                     err "Invalid argument: $(clrcode)$1$(clrrs)"
                 fi
+                ;;
         esac
         shift
     done
 
-    [ -z "$ARG_DIR" ] && ARG_DIR="$HOME/Projects"
+    [ -z "$OPT_ROOT" ] && OPT_ROOT="$HOME/Projects"
+    [ -d "$OPT_ROOT" ] \
+        || err "Root directory $(clrcode)${OPT_ROOT}$(clrrs) is not a directory."
 
     true
 }
