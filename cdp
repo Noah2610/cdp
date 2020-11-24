@@ -1,0 +1,6 @@
+# ./cdp.sh wrapper to actually chance directory.
+# USAGE:
+#     . ./cdp [FLAGS...] [OPTIONS...] [PATTERN]
+# Same command-line API as ./cdp.sh, but note the dot at the start.
+
+cd "$( ./cdp.sh "$@" )"
