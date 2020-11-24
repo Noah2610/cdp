@@ -28,61 +28,43 @@ impl Projects {
     }
 
     fn find_in(&mut self, root: PathBuf) {
-        match fs::read_dir(&root) {
-            Ok(read_dir) => {
-                read_dir.into_iter().for_each(|entry| {
-                    if let Ok(entry) = entry {
-                        match entry.metadata() {
-                            Ok(metadata) => {
-                                if metadata.is_dir() {
-                                    let path = entry.path();
-                                    if self.is_project_directory(&path) {
-                                        self.projects.push(path);
-                                    } else {
-                                        self.find_in(path);
-                                    }
-                                }
-                            }
-                            Err(err) => {
-                                eprintln!("{}", err);
+        fs::read_dir(root).into_iter().for_each(|read_dir| {
+            read_dir
+                .into_iter()
+                .filter_map(Result::ok)
+                .for_each(|entry| {
+                    if let Ok(metadata) = entry.metadata() {
+                        if metadata.is_dir() {
+                            let path = entry.path();
+                            if self.is_project_directory(&path) {
+                                self.projects.push(path);
+                            } else {
+                                self.find_in(path);
                             }
                         }
                     }
-                });
-            }
-            Err(err) => {
-                eprintln!("{}", err);
-            }
-        }
+                })
+        })
     }
 
     fn is_project_directory(&self, dir: &PathBuf) -> bool {
         fs::read_dir(dir)
-            .map_err(|err| {
-                eprintln!("{}", err);
-                false
-            })
-            .map(|dir| {
-                dir.into_iter().any(|entry| {
+            .ok()
+            .map(|read_dir| {
+                read_dir.into_iter().filter_map(Result::ok).any(|entry| {
                     entry
-                        .map(|entry| {
-                            entry
-                                .metadata()
-                                .ok()
-                                .map(|meta| meta.is_file())
-                                .unwrap_or(false)
-                                && entry
-                                    .file_name()
-                                    .to_str()
-                                    .unwrap()
-                                    .rsplit('.')
-                                    .next()
-                                    .map(|ext| {
-                                        PROJECT_FILES_EXTS.contains(&ext)
-                                    })
-                                    .unwrap_or(false)
-                        })
+                        .metadata()
+                        .ok()
+                        .map(|meta| meta.is_file())
                         .unwrap_or(false)
+                        && entry
+                            .file_name()
+                            .to_str()
+                            .unwrap()
+                            .rsplit('.')
+                            .next()
+                            .map(|ext| PROJECT_FILES_EXTS.contains(&ext))
+                            .unwrap_or(false)
                 })
             })
             .unwrap_or(false)
