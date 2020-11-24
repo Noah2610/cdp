@@ -1,9 +1,7 @@
-// rustc ./find_projects.rs && ./find_projects
-
 use std::env;
 use std::fs;
 use std::io;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 const PROJECT_FILES_EXTS: [&str; 10] = [
     "html", "js", "json", "lua", "rb", "ron", "rs", "sh", "toml", "ts",
@@ -33,8 +31,6 @@ impl Projects {
     }
 
     fn find_in(&mut self, root: PathBuf) -> io::Result<()> {
-        use std::fs::FileType;
-
         for entry in fs::read_dir(&root)? {
             if let Ok(entry) = entry {
                 let metadata = entry.metadata()?;
@@ -44,7 +40,7 @@ impl Projects {
                     if self.is_project_directory(&path)? {
                         self.projects.push(path);
                     } else {
-                        self.find_in(path);
+                        self.find_in(path)?;
                     }
                 }
             }

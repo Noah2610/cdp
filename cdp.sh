@@ -1,4 +1,5 @@
 #!/bin/bash
+# See `./cdp.sh --help` for info.
 
 # shellcheck source=./util.sh disable=SC2155
 function _dl_util_sh {

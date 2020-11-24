@@ -1,4 +1,5 @@
 #!/bin/bash
+# Build script to compile `./find_projects.rs`.
 
 # shellcheck source=./util.sh disable=SC2155
 function _dl_util_sh {
@@ -12,9 +13,9 @@ set -e
 
 check "rustc"
 
-msg "Compiling ./find_projects with rustc..."
+msg "Compiling $(clr "${CLR_CODE[@]}")./find_projects.rs$(clrrs)"
 
 rustc -C opt-level=3 "$@" \
     "${ROOT}/find_projects.rs"
 
-msg "Done compiling, ready to use ./cdp.sh"
+msg "Done compiling, ready to use $(clr "${CLR_CODE[@]}")./find_projects$(clrrs)"
