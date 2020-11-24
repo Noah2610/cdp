@@ -25,7 +25,6 @@ fn main() -> io::Result<()> {
 #[derive(Default, Debug)]
 struct Projects {
     pub projects: Vec<PathBuf>,
-    checked_dirs: Vec<PathBuf>,
 }
 
 impl Projects {
@@ -41,15 +40,12 @@ impl Projects {
                 let metadata = entry.metadata()?;
 
                 if metadata.is_dir() {
-                    // Check file
                     let path = entry.path();
                     if self.is_project_directory(&path)? {
                         self.projects.push(path);
                     } else {
                         self.find_in(path);
                     }
-                } else if metadata.is_file() {
-                    // TODO: Ignore?
                 }
             }
         }
