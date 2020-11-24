@@ -26,6 +26,9 @@ DESCRIPTION
     File extensions to identify project directories by:
         html js json lua rb ron rs sh toml ts
 
+    Uses rust program \`./find_projects.rs\`.
+    Run \`./build\` to compile (must have \`rustc\` installed).
+
 ARGUMENTS
     PATTERN
         If PATTERN is given, then fzf isn't started,
@@ -61,8 +64,6 @@ function main {
 function run_find_projects {
     local root_dir="$1"
     local pattern="$2"
-
-    echo "$root_dir"
 
     if [ -z "$pattern" ]; then
         # interactive
