@@ -1,5 +1,5 @@
 # cdp
-Find project directories and cd's into them.  
+Find project directories and cd into them.  
 Basically a remake of `z` .
 
 Uses rust (`./find_projects.rs`) to recursively find project directories.  
@@ -24,3 +24,11 @@ To compile with `rustc` run the build script ...
 ```
 ./build
 ```
+
+## Installation
+_TODO..._
+
+## License
+Distributed under the terms of the [MIT license].
+
+[MIT license]: ./LICENSE
