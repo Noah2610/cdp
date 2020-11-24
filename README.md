@@ -4,7 +4,8 @@ Basically a remake of `z` .
 
 Uses rust (`./find_projects.rs`) to recursively find project directories.  
 Project directories are identified by containing any code or manifest file,  
-which are simply found by their file extension.
+which are simply found by their file extension,  
+or by containing a `.git/` directory.
 
 `./cdp.sh` wraps the compiled `./find_projects` program,  
 and may launch `fzf`. See `./cdp.sh --help` for details.

@@ -23,8 +23,8 @@ DESCRIPTION
     Cd's into the selected project.
 
     A project is directory is identified by containing
-    any form of code or manifest files, by checking
-    files' extensions.
+    any form of code or manifest files, by checking file extensions,
+    or if the directory contains a \`.git/\` directory.
     File extensions to identify project directories by:
         html js json lua rb ron rs sh toml ts
 

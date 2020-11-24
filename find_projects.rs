@@ -5,6 +5,7 @@ use std::path::PathBuf;
 const PROJECT_FILES_EXTS: [&str; 10] = [
     "html", "js", "json", "lua", "rb", "ron", "rs", "sh", "toml", "ts",
 ];
+const PROJECT_DIR_NAMES: [&str; 1] = [".git"];
 
 fn main() {
     let root =
@@ -52,19 +53,25 @@ impl Projects {
             .ok()
             .map(|read_dir| {
                 read_dir.into_iter().filter_map(Result::ok).any(|entry| {
+                    let filename =
+                        entry.file_name().to_str().unwrap().to_string();
                     entry
                         .metadata()
                         .ok()
-                        .map(|meta| meta.is_file())
+                        .map(|meta| {
+                            (meta.is_file()
+                                && filename
+                                    .rsplit('.')
+                                    .next()
+                                    .map(|ext| {
+                                        PROJECT_FILES_EXTS.contains(&ext)
+                                    })
+                                    .unwrap_or(false))
+                                || (meta.is_dir()
+                                    && PROJECT_DIR_NAMES
+                                        .contains(&filename.as_str()))
+                        })
                         .unwrap_or(false)
-                        && entry
-                            .file_name()
-                            .to_str()
-                            .unwrap()
-                            .rsplit('.')
-                            .next()
-                            .map(|ext| PROJECT_FILES_EXTS.contains(&ext))
-                            .unwrap_or(false)
                 })
             })
             .unwrap_or(false)
