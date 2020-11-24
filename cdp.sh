@@ -19,7 +19,8 @@ USAGE
 
 DESCRIPTION
     Finds project directories and feeds them to FZF.
-    Cd into the selected project.
+    Cd's into the selected project.
+
     A project is directory is identified by containing
     any form of code or manifest files, by checking
     files' extensions.

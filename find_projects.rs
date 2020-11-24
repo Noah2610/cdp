@@ -16,7 +16,7 @@ fn main() -> io::Result<()> {
     let projects = find_projects(root)?;
 
     for project in projects.projects {
-        println!("\"{}\"", project.to_str().unwrap());
+        println!("{}", project.to_str().unwrap());
     }
 
     Ok(())
