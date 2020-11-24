@@ -60,6 +60,8 @@ function main {
     select_project=$( run_find_projects "$OPT_ROOT" "$ARG_PATTERN" )
 
     echo "$select_project"
+
+    [ -d "$select_project" ]
 }
 
 function run_find_projects {
@@ -108,7 +110,7 @@ function parse_args {
 }
 
 function print_help {
-    echo "$HELP"
+    echo -e "$HELP"
     exit 0
 }
 

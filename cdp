@@ -3,4 +3,6 @@
 #     . ./cdp [FLAGS...] [OPTIONS...] [PATTERN]
 # Same command-line API as ./cdp.sh, but note the dot at the start.
 
-cd "$( ./cdp.sh "$@" )"
+P="$( ./cdp.sh "$@" )" || return 1
+[ -d "$P" ] && cd "$P"
+unset P
